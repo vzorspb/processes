@@ -1,0 +1,90 @@
+.table {
+	margin-bottom: 10px;
+	border: 1px solid #666666;
+	border-collapse: collapse; 
+	
+}
+
+.table th {
+	font-weight: bold;
+	padding: 5px;
+	background: #efefef;
+	border: 1px solid #666666;
+
+}
+
+.table thead {
+	text-align: center;
+	vertical-align: middle;
+	font-weight: bold;
+}
+
+.table td {
+	border: 1px solid #666666;
+	padding: 1px;
+	text-align: center; 
+	vertical-align: middle;
+}
+.table tbody tr:nth-child(odd){
+	background: #fff;
+}
+    
+.table tbody tr:nth-child(even){
+	background: #F7F7F7;
+}
+
+.table2 {
+	margin-bottom: 10px;
+	border: 0px;
+	border-collapse: collapse; 
+	background: #fff;
+	
+}
+
+.table2 td {
+	border: 0px solid #666666;
+	padding: 0px;
+	background: #fff;	
+}
+
+.addform {
+	margin-bottom: 10px;
+	border: 1px solid #666666;
+	border-collapse: collapse; 
+	
+}
+
+.addform th {
+	font-weight: bold;
+	padding: 5px;
+	border: 0px solid white;
+
+}
+
+.addform thead {
+	text-align: left;
+	vertical-align: middle;
+	font-weight: bold;
+}
+
+.addform tr {
+	border: 1px solid #666666;
+}
+
+.addform td {
+/*	border: 1px solid #666666; */
+	padding: 1px;
+	text-align: left; 
+	vertical-align: middle;
+}
+.addform tbody tr:nth-child(odd){
+	background: #f1f1f1;
+}
+    
+.addform tbody tr:nth-child(even){
+	background: #E7E7E7;
+}
+.message p {
+	border: 1px solid red;
+	padding: 10px;
+}
