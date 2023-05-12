@@ -115,6 +115,6 @@ if ($islogin)
 else
 {echo "<li><a class='link' href='login.php?url=".$_SERVER['REQUEST_URI']."'>&#9094; Войти</a></li>";}
 echo "</ui>";
-if ($_COOKIE['org_id']>0) {echo '<p align="center" style="font-weight:bold; border: solid 2px red; padding: 5px;">Включена фильтрация списков по организации</p>';}
+if ($_COOKIE['org_id']>0) {echo '<p align="center" style="font-weight:bold; background-color:#FFFACD; border: solid 2px red; padding: 5px;">Включена фильтрация выводимой информации по названию организации. Данный режим используется для просмотра списка процессов и видов деятельности интересующей организации, а также добавления новых процессов по своей организации. Карточка процесса в данном режиме может отображаться некорректно.</p>';}
 
 ?>
