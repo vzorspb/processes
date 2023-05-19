@@ -17,7 +17,7 @@ function mssql_escape($data) {
  $resp = mssql_query($req);
  $res= mssql_fetch_array($resp);
  $net= trim($res[0]);
- if (not($islogin) and $_SERVER['REMOTE_ADDR']=='192.168.5.1'){die();}
+ if (!$islogin and $_SERVER['REMOTE_ADDR']=='192.168.5.1'){die();}
  if ((strpos($_SERVER['REMOTE_ADDR'],$net)===false or $net=='')and $islocal)
  {
     echo '<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta http-equiv="refresh" content="4; url=index.php" />Нет прав для выполнения операции.<br>'.$_SERVER['REMOTE_ADDR'].'<br>'.$res[0];
