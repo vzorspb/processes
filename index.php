@@ -74,6 +74,8 @@ ini_set('display_errors', '1');
 	   $ou = $row[0];
 	}
 	
+	
+	//Владелец
 	$req2='SELECT count(id) FROM processes WHERE owner_id='.$row[1].';';
         $resp2 = mssql_query($req2);
         $pc = mssql_fetch_array($resp2);
@@ -85,7 +87,7 @@ ini_set('display_errors', '1');
            $filter4=$filter4.','.$id[0];
         }
 
-
+	// Участник
 	$req3='SELECT count(id) FROM process_workers WHERE worker_id='.$row[1].';';
         $resp3 = mssql_query($req3);
         $wk = mssql_fetch_array($resp3);
@@ -97,12 +99,21 @@ ini_set('display_errors', '1');
            $filter3=$filter3.','.$id[0];
         }
 
-        
+        //список подчиненных 
+        $req_tree='DECLARE @start INT; SET @start = '.$row[1].'; SELECT id FROM org_structure  WHERE parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start) or parrent_id=@start or id=@start';
+	$resp_tree=mssql_query($req_tree);
+	$child_id_list='0';
+	while($id = mssql_fetch_array($resp_tree))
+	{
+	   $child_id_list=$child_id_list.','.$id[0];
+	}
+    
 
-        $req4='DECLARE @start INT; SET @start = '.$row[1].'; SELECT count(id) FROM [processes] WHERE owner_id in(SELECT id FROM org_structure  WHERE parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start) or parrent_id=@start or id=@start)';
+	//Руководитель
+        $req4='SELECT count(id) FROM [processes] WHERE owner_id in('.$child_id_list.')';
         $resp4 = mssql_query($req4);
         $ch = mssql_fetch_array($resp4);
-        $req4='DECLARE @start INT; SET @start = '.$row[1].'; SELECT id FROM [processes] WHERE owner_id in(SELECT id FROM org_structure  WHERE parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start) or parrent_id=@start or id=@start)';
+        $req4='SELECT id FROM [processes] WHERE owner_id in('.$child_id_list.')';
         $resp4 = mssql_query($req4);
         $filter2='0';
         while($id = mssql_fetch_array($resp4))
@@ -113,24 +124,24 @@ ini_set('display_errors', '1');
 
 
 
-        $req5='DECLARE @start INT; SET @start = '.$row[1].'; WITH t1 as (SELECT authority_id FROM [processes] WHERE owner_id in(SELECT id FROM org_structure  WHERE parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start) or parrent_id=@start or id=@start and authority_id<>106 ) GROUP BY authority_id) SELECT count(*) from t1;';
+        //Полномочия
+        $req5='WITH t1 as (SELECT authority_id FROM [processes] WHERE owner_id in('.$child_id_list.') GROUP BY authority_id) SELECT count(*) from t1;';
         $resp5 = mssql_query($req5);
         $au = mssql_fetch_array($resp5);
-        $req5='DECLARE @start INT; SET @start = '.$row[1].'; SELECT authority_id FROM [processes] WHERE owner_id in(SELECT id FROM org_structure  WHERE parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in(SELECT id FROM org_structure WHERE parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start)) or parrent_id in (SELECT id FROM org_structure WHERE parrent_id=@start) or parrent_id=@start or id=@start and authority_id<>106 ) GROUP BY authority_id;';
+        $req5='DECLARE @start INT; SET @start = '.$row[1].'; SELECT authority_id FROM [processes] WHERE owner_id in('.$child_id_list.') GROUP BY authority_id;';
         $resp5 = mssql_query($req5);
         $filter='0';
         while($id = mssql_fetch_array($resp5))
         {
            $filter=$filter.','.$id[0];
         }
-        
-        
-
-        $req6='WITH t3 AS (SELECT authority_id FROM process_workers as t1 JOIN processes as t2 ON t1.process_id=t2.id  WHERE worker_id='.$row[1].' GROUP BY authority_id) SELECT count(authority_id) FROM t3;';
+                
+        //Полномочия
+        $req6='WITH t3 AS (SELECT authority_id FROM process_workers as t1 JOIN processes as t2 ON t1.process_id=t2.id  WHERE worker_id in ('.$child_id_list.') GROUP BY authority_id) SELECT count(authority_id) FROM t3;';
         $resp6 = mssql_query($req6);
         $au2 = mssql_fetch_array($resp6);
 
-        $req6='SELECT authority_id FROM process_workers as t1 JOIN processes as t2 ON t1.process_id=t2.id  WHERE worker_id='.$row[1].' GROUP BY authority_id;';
+        $req6='SELECT authority_id FROM process_workers as t1 JOIN processes as t2 ON t1.process_id=t2.id  WHERE worker_id in ('.$child_id_list.') GROUP BY authority_id;';
         $resp6 = mssql_query($req6);
         $filter1='0';
         while($id = mssql_fetch_array($resp6))
