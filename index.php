@@ -58,10 +58,12 @@ ini_set('display_errors', '1');
     
     $req='SELECT unit_name, id, note FROM org_structure WHERE parrent_id='.$start.' ORDER by sort_level, id;';    
     $resp = mssql_query($req);
-    echo "<table  class='table'><thead><tr><td rowspan='2'>Структурное подразделение/сотрудник</td><td colspan=3>Процессы</td><td rowspan='2'>Полномочия/<br>виды деятельности </td></tr>";
+    echo "<table  class='table'><thead><tr><td rowspan='2' colspan='2'>Структурное подразделение/сотрудник</td><td colspan=3>Процессы</td><td rowspan='2'>Полномочия/<br>виды деятельности </td></tr>";
     echo "<tr><td>Руководитель</td><td>Владелец</td><td>Участник</td></tr></thead>";
+    $st=0;
     while($row = mssql_fetch_array($resp)) 
     {
+        $st++;
         $req1='SELECT count(id) FROM org_structure WHERE parrent_id='.$row[1].';';
         $resp1 = mssql_query($req1);
         $next = mssql_fetch_array($resp1);
@@ -153,11 +155,11 @@ ini_set('display_errors', '1');
 	
 	if ($next[0]>0)
 	{
- 	   echo '<tr><td style="text-align: left; vertical-align: middle;"><a href="?start='.$row[1].'">'.$ou.'</a></td><td><a href="processes.php?filter='.$filter2.'">'.$ch[0].'</a></td><td><a href="processes.php?filter='.$filter4.'">'.$pc[0].'</a></td><td><a href="processes.php?filter='.$filter3.'">'.$wk[0].'</a></td><td><a href="authority.php?filter='.$filter.'">'.$au[0].'</a></td></tr>';
+ 	   echo '<tr><td>'.$st.'</td><td style="text-align: left; vertical-align: middle;"><a href="?start='.$row[1].'">'.$ou.'</a></td><td><a href="processes.php?filter='.$filter2.'">'.$ch[0].'</a></td><td><a href="processes.php?filter='.$filter4.'">'.$pc[0].'</a></td><td><a href="processes.php?filter='.$filter3.'">'.$wk[0].'</a></td><td><a href="authority.php?filter='.$filter.'">'.$au[0].'</a></td></tr>';
  	}
  	else
  	{
- 	   echo '<tr><td style="text-align: left; vertical-align: middle;">'.$ou.'</td><td>-</td><td><a href="processes.php?filter='.$filter4.'">'.$pc[0].'</a></td><td><a href="processes.php?filter='.$filter3.'">'.$wk[0].'</a></td><td><a href="authority.php?filter='.$filter1.'">'.$au2[0].'</a></td></tr>';
+ 	   echo '<tr><td>'.$st.'</td><td style="text-align: left; vertical-align: middle;">'.$ou.'</td><td>-</td><td><a href="processes.php?filter='.$filter4.'">'.$pc[0].'</a></td><td><a href="processes.php?filter='.$filter3.'">'.$wk[0].'</a></td><td><a href="authority.php?filter='.$filter1.'">'.$au2[0].'</a></td></tr>';
  	}
     }
     echo "</table>";
