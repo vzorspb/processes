@@ -188,7 +188,7 @@ echo $req;
     else
     {$filter='';}
     echo '<tr><td>Владелец процесса</td><td><select name="owner_id">';
-    $req='SELECT t1.id,t1.unit_name,t1.note, t2.unit_name FROM org_structure as t1 JOIN org_structure as t2 ON t1.org_id=t2.id WHERE '.$filter.' t1.type in ("OU", "ORG")  ORDER BY t1.org_id, t1.sort_level;';
+    $req='SELECT t1.id,t1.unit_name,t1.note, t2.unit_name FROM org_structure as t1 JOIN org_structure as t2 ON t1.org_id=t2.id WHERE '.$filter.' t1.type in ("OU", "CHEFF")  ORDER BY t1.org_id, t1.sort_level;';
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
     {
