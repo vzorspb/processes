@@ -5,7 +5,7 @@ function mssql_escape($data) {
     return addslashes($data);
 }
 
- include("config.php");
+ include("menu.php");
  if ($islocal or $islogin){}
  else
  {

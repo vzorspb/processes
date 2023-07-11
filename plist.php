@@ -2,9 +2,9 @@
 print '<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8"> ';
 include('menu.php');
 if (isset($_GET['au_id']))
-{print "<a href='http://192.168.3.248/processes/add.php?au_id=".$_GET['au_id']."'>Добавить процесс</a>";}
+{print "<a href='add.php?au_id=".$_GET['au_id']."'>Добавить процесс</a>";}
 else
-{print "<a href='http://192.168.3.248/processes/add.php'>Добавить процесс</a>";}
+{print "<a href='add.php'>Добавить процесс</a>";}
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
     if ($db)
