@@ -56,14 +56,17 @@ ini_set('display_errors', '1');
     echo '</ou>';
     
     
-    $req='SELECT unit_name, id, note FROM org_structure WHERE parrent_id='.$start.' ORDER by sort_level, id;';    
+    $req='SELECT unit_name, id, note, type FROM org_structure WHERE parrent_id='.$start.' ORDER by sort_level, id;';    
     $resp = mssql_query($req);
-    echo "<table  class='table'><thead><tr><td rowspan='2' colspan='2'>Структурное подразделение/сотрудник</td><td colspan=3>Процессы</td><td rowspan='2'>Полномочия/<br>виды деятельности </td></tr>";
+    echo "<table  class='table'><thead><tr><td rowspan='2' colspan='2'>Структурное подразделение/сотрудник</td><td colspan=3>Процессы</td><td rowspan='2'>Полномочия/<br>виды деятельности </td>";
+    if ($start==0){echo "<td rowspan='2'>Ответственный за <br>инвентаризацию процессов</td>";}
+    echo "</tr>";
     echo "<tr><td>Руководитель</td><td>Владелец</td><td>Участник</td></tr></thead>";
     $st=0;
     while($row = mssql_fetch_array($resp)) 
     {
         $st++;
+        $type=$row[3];
         $req1='SELECT count(id) FROM org_structure WHERE parrent_id='.$row[1].';';
         $resp1 = mssql_query($req1);
         $next = mssql_fetch_array($resp1);
@@ -151,11 +154,21 @@ ini_set('display_errors', '1');
            $filter1=$filter1.','.$id[0];
         }
 
-	
+	#Ответственный за инвентаризацию
+    	$executor='';
+	if ($start==0 and $islogin)
+	{
+	    $req7="SELECT top(1) note,id FROM org_structure WHERE org_id=$row[1] and not login is null;";
+	    $resp7 = mssql_query($req7);
+	    $r = mssql_fetch_array($resp7);
+	    if (isset($r[0])){ $executor="<a href='index.php?start=$r[1]'>$r[0]</a>";} else { $executor='-';}
+	}
 	
 	if ($next[0]>0)
 	{
- 	   echo '<tr><td>'.$st.'</td><td style="text-align: left; vertical-align: middle;"><a href="?start='.$row[1].'">'.$ou.'</a></td><td><a href="processes.php?filter='.$filter2.'">'.$ch[0].'</a></td><td><a href="processes.php?filter='.$filter4.'">'.$pc[0].'</a></td><td><a href="processes.php?filter='.$filter3.'">'.$wk[0].'</a></td><td><a href="authority.php?filter='.$filter.'">'.$au[0].'</a></td></tr>';
+ 	   echo '<tr><td>'.$st.'</td><td style="text-align: left; vertical-align: middle;"><a href="?start='.$row[1].'">'.$ou.'</a></td><td><a href="processes.php?filter='.$filter2.'">'.$ch[0].'</a></td><td><a href="processes.php?filter='.$filter4.'">'.$pc[0].'</a></td><td><a href="processes.php?filter='.$filter3.'">'.$wk[0].'</a></td><td><a href="authority.php?filter='.$filter.'">'.$au[0].'</a></td>';
+	   if ($start==0){echo "<td>$executor</td>";}
+ 	   echo '</tr>';
  	}
  	else
  	{
