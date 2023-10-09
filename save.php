@@ -67,6 +67,13 @@ function mssql_escape($data) {
           $resp = mssql_query($req);
        }
 
+       if($_POST['kpr']!=0)
+       {
+    	  $req="INSERT INTO process_kpr (process_id, kpr_id) VALUES (".$_POST['pid'].", ".$_POST['kpr'].");";
+          $resp = mssql_query($req);
+       }
+
+
        if($_POST['it_system']!=0)
        {
     	  $req="INSERT INTO process_it_system (process_id, it_system_id) VALUES (".$_POST['pid'].", ".$_POST['it_system'].");";

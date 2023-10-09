@@ -3,6 +3,7 @@ print '<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 include("menu.php");
 error_reporting(E_ALL);
 $authority_add='';
+$kpr='';
 ini_set('display_errors', '1');
 if ($islocal or $islogin)
 {
@@ -70,6 +71,12 @@ else
           $authority_add=$authority_add.'<p>'.$line[0].' '.$line[1].'</p>';
        }
        
+       $req1='SELECT t1.npp, t1.name FROM kpr as t1 JOIN process_kpr as t2 ON t2.kpr_id=t1.id WHERE t2.process_id='.$_GET['pid'];
+       $resp1 = mssql_query($req1);
+       while($line = mssql_fetch_array($resp1)) 
+       {
+          $kpr=$kpr.'<p>'.$line[0].' '.$line[1].'</p>';
+       }
        
        
     }
@@ -103,7 +110,8 @@ else
         $authority_id=$_GET['au_id'];
     }
     echo "<table class='addform'><thead><tr><td colspan=3><b>Карточка процесса</b></tr></thead>";
-    echo '<tr><td colspan=2>Наименование процесса</td><td><textarea required style="width:100%" name="process_name">'.$p_name.'</textarea></td></tr>';
+    echo '<tr><td colspan=2>Жизненная ситуация</td></tr>';
+    
 //    echo '<input type="hidden" name="authority" value="'.$authority_id.'">';
 
     echo '<tr><td rowspan=2>Реализуемые полномочия</td><td>основное</td><td>'.$authority;
@@ -134,16 +142,45 @@ echo $req;
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
     {
-      $txt = $row[1].substr($row[2],0,84).'...';
+      $txt = $row[1].substr($row[2],0,200).'...';
       echo "<option ";
       echo "value='".$row[0]."'> ".$txt."</option>";
     }    
     echo '</select>';
     echo '</td></tr>';
+    echo '<tr><td colspan=2>Название услуги, функции, сервиса</td></tr>';
+    echo '<tr><td rowspan=3>Классификация</td><td>Блок</td></tr>';
+    echo '<tr><td>Процессная категория(направление)</td></tr>';
+    echo '<tr><td>Группа процессов</td></tr>';
+    echo '<tr><td colspan=2>Наименование процесса</td><td><textarea required style="width:100%" name="process_name">'.$p_name.'</textarea></td></tr>';
+    echo '<tr><td colspan=2>КПР</td><td>'.$kpr;
     
+    echo '<select name="kpr">';
+    echo '<option value=0></option>';
+    $req='SELECT id,npp,name FROM kpr ORDER BY [npp];';
+    $resp = mssql_query($req);
+    while($row = mssql_fetch_array($resp)) 
+    {
+      $txt = $row[1].substr($row[2],0,300).'...';
+      echo "<option ";
+      echo "value='".$row[0]."'> ".$txt."</option>";
+    }    
+    echo '</select>';
+    echo '</td></tr>';
+    echo '<tr><td rowspan=5>Общие сведения</td><td>Управляющее воздействие (документ, регламентирующий процесс)</td><td><textarea style="width:100%" name="npa">'.$npa.'</textarea></td></tr>';
+    echo '<tr><td>Статус процесса (реинжиниринг)</td><td><select name="desc_level">';
+    echo "<option value='0'></option>";
+    $req='SELECT * FROM descr_level ORDER BY id;';
+    $resp = mssql_query($req);
+    while($row = mssql_fetch_array($resp)) 
+    {
+      $txt=$row[1].' - '.$row[2];
+      echo "<option ";
+      if ($desc_level==$row[0]) echo "selected ";
+      echo "value='".$row[0]."'> ".$txt."</option>";
+    }
+    echo '</select></td></tr>';
 
-
-    echo '<tr><td rowspan=6>Общие сведения</td><td>Управляющее воздействие (документ, регламентирующий процесс)</td><td><textarea style="width:100%" name="npa">'.$npa.'</textarea></td></tr>';
     echo '<tr><td>Приоритет описания</td><td><select name="desc_prority">';
     $req='SELECT * FROM desc_prority ORDER BY id;';
     $resp = mssql_query($req);
@@ -157,31 +194,19 @@ echo $req;
     }
     echo '</select></td></tr>';
 
-    echo '<tr><td>Текущий уровень описания</td><td><select name="desc_level">';
-    echo "<option value='0'></option>";
-    $req='SELECT * FROM descr_level ORDER BY id;';
-    $resp = mssql_query($req);
-    while($row = mssql_fetch_array($resp)) 
-    {
-      $txt=$row[1].' - '.$row[2];
-      echo "<option ";
-      if ($desc_level==$row[0]) echo "selected ";
-      echo "value='".$row[0]."'> ".$txt."</option>";
-    }
-    echo '</select></td></tr>';
     
-    echo '<tr><td>Текущий уровень исполнения</td><td><select name="exec_level">';
-    echo "<option value='0'></option>";
-    $req='SELECT * FROM exec_level ORDER BY id;';
-    $resp = mssql_query($req);
-    while($row = mssql_fetch_array($resp)) 
-    {
-      $txt=$row[1].' - '.$row[2];
-      echo "<option ";
-      if ($exec_level==$row[0]) echo "selected ";
-      echo "value='".$row[0]."'> ".$txt."</option>";
-    }    
-    echo '</select></td></tr>';
+//    echo '<tr><td>Текущий уровень исполнения</td><td><select name="exec_level">';
+//    echo "<option value='0'></option>";
+//    $req='SELECT * FROM exec_level ORDER BY id;';
+//    $resp = mssql_query($req);
+//    while($row = mssql_fetch_array($resp)) 
+//    {
+//      $txt=$row[1].' - '.$row[2];
+//      echo "<option ";
+//      if ($exec_level==$row[0]) echo "selected ";
+//      echo "value='".$row[0]."'> ".$txt."</option>";
+//    }    
+//    echo '</select></td></tr>';
 
     if ($_COOKIE["org_id"]>0)
     {$filter=' t1.org_id='.$_COOKIE["org_id"].' and ';}
