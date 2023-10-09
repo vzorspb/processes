@@ -4,6 +4,8 @@ include("menu.php");
 error_reporting(E_ALL);
 $authority_add='';
 $kpr='';
+$situation='';
+$service='';
 ini_set('display_errors', '1');
 if ($islocal or $islogin)
 {
@@ -71,6 +73,28 @@ else
           $authority_add=$authority_add.'<p>'.$line[0].' '.$line[1].'</p>';
        }
        
+       
+       $req1='SELECT t1.name FROM situation as t1 JOIN process_situation as t2 ON t2.situation_id=t1.id WHERE t2.process_id='.$_GET['pid'];
+       $resp1 = mssql_query($req1);
+       $authority_add='';
+       while($line = mssql_fetch_array($resp1)) 
+       {
+          $situation=$situation.'<p>'.$line[0].'</p>';
+       }
+       
+       
+       
+
+
+       $req1='SELECT t1.type, t1.name FROM services as t1 JOIN process_service as t2 ON t2.service_id=t1.id WHERE t2.process_id='.$_GET['pid'];
+       $resp1 = mssql_query($req1);
+       $authority_add='';
+       while($line = mssql_fetch_array($resp1)) 
+       {
+          $service=$service.'<p>'.$line[0].': '.$line[1].'</p>';
+       }
+
+       
        $req1='SELECT t1.npp, t1.name FROM kpr as t1 JOIN process_kpr as t2 ON t2.kpr_id=t1.id WHERE t2.process_id='.$_GET['pid'];
        $resp1 = mssql_query($req1);
        while($line = mssql_fetch_array($resp1)) 
@@ -110,7 +134,20 @@ else
         $authority_id=$_GET['au_id'];
     }
     echo "<table class='addform'><thead><tr><td colspan=3><b>Карточка процесса</b></tr></thead>";
-    echo '<tr><td colspan=2>Жизненная ситуация</td></tr>';
+    echo '<tr><td colspan=2><abbr title="В графе «Жизненная ситуация» необходимо указать одну или несколько жизненных ситуаций, в которые входит функция, услуга или сервис. Эта информация может быть в дальнейшем использована для удобства работы по жизненным ситуациям. Если функция, услуга или сервис не может быть отнесена к жизненной ситуации, то поле может быть оставлено пустым.">Жизненная ситуация</abbr></td><td>'.$situation;
+    
+    echo '<select name="situation">';
+    echo '<option value=0></option>';
+    $req='SELECT id,name FROM situation ORDER BY id;';
+    $resp = mssql_query($req);
+    while($row = mssql_fetch_array($resp)) 
+    {
+      $txt = substr($row[1],0,300).'...';
+      echo "<option ";
+      echo "value='".$row[0]."'> ".$txt."</option>";
+    }    
+    echo '</select>';
+    echo '</td></tr>';
     
 //    echo '<input type="hidden" name="authority" value="'.$authority_id.'">';
 
@@ -148,7 +185,20 @@ echo $req;
     }    
     echo '</select>';
     echo '</td></tr>';
-    echo '<tr><td colspan=2>Название услуги, функции, сервиса</td></tr>';
+    echo '<tr><td colspan=2>Название услуги, функции, сервиса</td><td>'.$service;
+    
+    echo '<select name="service">';
+    echo '<option value=0></option>';
+    $req='SELECT id,type,name FROM services ORDER BY id;';
+    $resp = mssql_query($req);
+    while($row = mssql_fetch_array($resp)) 
+    {
+      $txt = $row[1].": ".substr($row[2],0,300).'...';
+      echo "<option ";
+      echo "value='".$row[0]."'> ".$txt."</option>";
+    }    
+    echo '</select>';
+    echo '</td></tr>';
     echo '<tr><td rowspan=3>Классификация</td><td>Блок</td></tr>';
     echo '<tr><td>Процессная категория(направление)</td></tr>';
     echo '<tr><td>Группа процессов</td></tr>';
@@ -174,7 +224,8 @@ echo $req;
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
     {
-      $txt=$row[1].' - '.$row[2];
+#      $txt=$row[1].' - '.$row[2];
+      $txt=$row[2];
       echo "<option ";
       if ($desc_level==$row[0]) echo "selected ";
       echo "value='".$row[0]."'> ".$txt."</option>";
@@ -187,7 +238,7 @@ echo $req;
     echo "<option value='0'></option>";
     while($row = mssql_fetch_array($resp)) 
     {
-      $txt=$row[1].'('.$row[2].')';
+      $txt=$row[1];#.'('.$row[2].')';
       echo "<option ";
       if ($desc_priority==$row[0]) echo "selected ";      
       echo "value='".$row[0]."'> ".$txt."</option>";

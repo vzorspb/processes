@@ -73,6 +73,18 @@ function mssql_escape($data) {
           $resp = mssql_query($req);
        }
 
+       if($_POST['service']!=0)
+       {
+    	  $req="INSERT INTO process_service (process_id, service_id) VALUES (".$_POST['pid'].", ".$_POST['service'].");";
+          $resp = mssql_query($req);
+       }
+
+       if($_POST['situation']!=0)
+       {
+    	  $req="INSERT INTO process_situation (process_id, situation_id) VALUES (".$_POST['pid'].", ".$_POST['situation'].");";
+          $resp = mssql_query($req);
+       }
+
 
        if($_POST['it_system']!=0)
        {
