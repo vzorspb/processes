@@ -4,6 +4,7 @@ include("menu.php");
 error_reporting(E_ALL);
 $authority_add='';
 $kpr='';
+
 $situation='';
 $service='';
 ini_set('display_errors', '1');
@@ -21,7 +22,7 @@ else
     {
     if (isset($_GET['pid'])){
        echo '<input type="hidden" name="pid" value="'.$_GET['pid'].'">';
-       $req='SELECT t1.name, t2.number,t2.text,t2.id,t1.npa,t1.exec_level,t1.desc_level, t1.desc_priority, t1.owner_id, t1.p_start, t1.p_finish, t1.problems, t1.measurement_id, t1.vpp, t1.sender_id, t1.reciever_id FROM processes as t1 JOIN authority as t2 on t1.authority_id=t2.id where t1.id='.$_GET['pid'].';';
+       $req='SELECT t1.name, t2.number,t2.text,t2.id,t1.npa,t1.exec_level,t1.desc_level, t1.desc_priority, t1.owner_id, t1.p_start, t1.p_finish, t1.problems, t1.measurement_id, t1.vpp, t1.sender_id, t1.reciever_id, t1.parrent_process_id  FROM processes as t1 JOIN authority as t2 on t1.authority_id=t2.id where t1.id='.$_GET['pid'].';';
        $resp = mssql_query($req);
        $line = mssql_fetch_array($resp);
        $find = array('\"','\r\n','\n','\r','  ');
@@ -40,6 +41,7 @@ else
        $problems=str_replace($find,$replace,$line[11]);
        $measurement=$line[12];
        $vpp=$line[13];
+       $level_3=$line['parrent_process_id'];
        $sender_id = $line[14];
        $reciever_id = $line[15];
        $req1='SELECT t2.unit_name, t2.note, t3.unit_name FROM process_workers as t1 JOIN org_structure as t2 ON t1.worker_id=t2.id JOIN org_structure as t3 ON t2.org_id = t3.id  WHERE t1.process_id='.$_GET['pid'].' ORDER BY t2.org_id, t2.sort_level, t2.note';
@@ -65,6 +67,18 @@ else
           $it_system='<p>'.$it_system.$line[0].'</p>';
        }
 
+       $req1='SELECT t2.id, t2.classifier_level FROM [process_classifier] as t1 JOIN classifier as t2 ON t2.id=t1.classifier_id WHERE t1.process_id='.$_GET['pid'];
+       $resp1 = mssql_query($req1);
+       $level_1=0;
+       $level_2=0;
+       
+       while($line = mssql_fetch_array($resp1)) 
+       {
+          if ($line[1]==1){$level_1=$line[0];}
+          if ($line[1]==2){$level_2=$line[0];}
+       }
+       
+       
        $req1='SELECT t1.number, t1.text FROM authority as t1 JOIN authority_add as t2 ON t2.authority_id=t1.id WHERE t2.process_id='.$_GET['pid'];
        $resp1 = mssql_query($req1);
        $authority_add='';
@@ -72,6 +86,7 @@ else
        {
           $authority_add=$authority_add.'<p>'.$line[0].' '.$line[1].'</p>';
        }
+       
        
        
        $req1='SELECT t1.name FROM situation as t1 JOIN process_situation as t2 ON t2.situation_id=t1.id WHERE t2.process_id='.$_GET['pid'];
@@ -134,7 +149,7 @@ else
         $authority_id=$_GET['au_id'];
     }
     echo "<table class='addform'><thead><tr><td colspan=3><b>Карточка процесса</b></tr></thead>";
-    echo '<tr><td colspan=2><abbr title="В графе «Жизненная ситуация» необходимо указать одну или несколько жизненных ситуаций, в которые входит функция, услуга или сервис. Эта информация может быть в дальнейшем использована для удобства работы по жизненным ситуациям. Если функция, услуга или сервис не может быть отнесена к жизненной ситуации, то поле может быть оставлено пустым.">Жизненная ситуация</abbr></td><td>'.$situation;
+    echo '<tr><td colspan=2><abbr title="В графе «Жизненная ситуация» необходимо указать одну или несколько жизненных ситуаций, в которые входит функция, услуга или сервис. Эта информация может быть в дальнейшем использована для удобства работы по жизненным ситуациям. Если функция, услуга или сервис не может быть отнесена к жизненной ситуации, то поле может быть оставлено пустым. Для добавления новой жизненной ситуации в справочник необходимо направить заявку по электронной почте на адрес nevzorov@kb.gov.spb.ru.">Жизненная ситуация</abbr></td><td>'.$situation;
     
     echo '<select name="situation">';
     echo '<option value=0></option>';
@@ -142,7 +157,7 @@ else
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
     {
-      $txt = substr($row[1],0,300).'...';
+      $txt = $row[1];
       echo "<option ";
       echo "value='".$row[0]."'> ".$txt."</option>";
     }    
@@ -158,12 +173,12 @@ else
     {$filter='WHERE org_id is null or org_id='.$_COOKIE["org_id"];}
     else
     {$filter='';}
-    $req='SELECT id,number,text FROM authority '.$filter .' ORDER BY [order];';
+    $req='SELECT id,number,SUBSTRING(text,0,140) FROM authority '.$filter .' ORDER BY [order];';
 echo $req;
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
     {
-      $txt = $row[1].substr($row[2],0,255).'...';
+      $txt = $row[1].$row[2];
       echo "<option ";
       if ($authority_id==$row[0]) echo "selected ";      
       echo "value='".$row[0]."'> ".$txt."</option>";
@@ -179,7 +194,7 @@ echo $req;
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
     {
-      $txt = $row[1].substr($row[2],0,200).'...';
+      $txt = $row[1].$row[2];
       echo "<option ";
       echo "value='".$row[0]."'> ".$txt."</option>";
     }    
@@ -189,29 +204,74 @@ echo $req;
     
     echo '<select name="service">';
     echo '<option value=0></option>';
-    $req='SELECT id,type,name FROM services ORDER BY id;';
+    $req='SELECT id,type,SUBSTRING(name,0,140) FROM services ORDER BY id;';
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
     {
-      $txt = $row[1].": ".substr($row[2],0,300).'...';
+      $txt = $row[1].": ".$row[2];
       echo "<option ";
       echo "value='".$row[0]."'> ".$txt."</option>";
     }    
     echo '</select>';
     echo '</td></tr>';
-    echo '<tr><td rowspan=3>Классификация</td><td>Блок</td></tr>';
-    echo '<tr><td>Процессная категория(направление)</td></tr>';
-    echo '<tr><td>Группа процессов</td></tr>';
+    echo '<tr><td rowspan=3>Классификация</td><td>Блок</td><td>';
+    echo '<select name="level_1">';
+    echo '<option value=0></option>';
+    $req='SELECT id,npp,class FROM classifier WHERE classifier_level=1 ORDER BY id;';
+    $resp = mssql_query($req);
+    while($row = mssql_fetch_array($resp)) 
+    {
+      $txt = $row[1].$row[2];
+      echo "<option ";
+      if ($row[0]==$level_1){echo " selected ";}
+      echo "value='".$row[0]."'> ".$txt."</option>";
+    }    
+    echo '</select>';
+    echo '</td></tr>';
+    echo '<tr><td>Процессная категория(направление)</td><td>';
+    echo '<select name="level_2">';
+    echo '<option value=0></option>';
+   if ($level_1>0){$wh=" and parrent_class_id='".$level_1."'";} else {$wh='';}
+    $req='SELECT id,npp,class FROM classifier WHERE classifier_level=2'.$wh.' ORDER BY id;';
+    $resp = mssql_query($req);
+    while($row = mssql_fetch_array($resp)) 
+    {
+      $txt = $row[1].$row[2];
+      echo "<option ";
+      if ($row[0]==$level_2){echo " selected ";}      
+      echo "value='".$row[0]."'> ".$txt."</option>";
+    }    
+    echo '</select>';
+    echo '</td></tr>';
+    echo '<tr><td>Группа процессов<input type="checkbox" name="is_group" disabled';
+    if ($level_3==$_GET['pid']) {echo ' checked';}
+    echo '></td><td>';
+    echo '<select name="level_3"';
+    if ($level_3==$_GET['pid']) {echo disabled;}
+    echo '>';
+    echo '<option value=0></option>';
+    if ($row[0]==$level_3){echo " selected ";}    
+    $req='SELECT id,name FROM processes WHERE id=parrent_process_id;';
+    $resp = mssql_query($req);
+    while($row = mssql_fetch_array($resp)) 
+    {
+      $txt = $row[1];
+      echo "<option ";
+      if ($row[0]==$level_3){echo " selected ";}    
+      echo "value='".$row[0]."'> ".$txt."</option>";
+    }    
+    echo '</select>';
+    echo '</td></tr>';
     echo '<tr><td colspan=2>Наименование процесса</td><td><textarea required style="width:100%" name="process_name">'.$p_name.'</textarea></td></tr>';
     echo '<tr><td colspan=2>КПР</td><td>'.$kpr;
     
     echo '<select name="kpr">';
     echo '<option value=0></option>';
-    $req='SELECT id,npp,name FROM kpr ORDER BY [npp];';
+    $req='SELECT id,npp,SUBSTRING(name,0,140) FROM kpr ORDER BY [npp];';
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
     {
-      $txt = $row[1].substr($row[2],0,300).'...';
+      $txt = $row[1].$row[2];
       echo "<option ";
       echo "value='".$row[0]."'> ".$txt."</option>";
     }    
@@ -344,7 +404,7 @@ echo $req;
     echo '<td>Данный процесс является составной частью другого процесса</td><td>';
     if (isset($_GET['pid']))
     {
-        $req="SELECT t1.id, t1.name, t2.unit_name FROM processes as t1 JOIN org_structure as t2 on t1.owner_id=t2.id WHERE t1.id<>0 and t1.id in (SELECT parrent_process_id FROM processes WHERE id='".$_GET['pid']."');";
+        $req="SELECT t1.id, t1.name, t2.unit_name FROM processes as t1 JOIN org_structure as t2 on t1.owner_id=t2.id WHERE t1.id<>0 and t1.id in (SELECT parrent_process_id FROM processes WHERE not (id=parrent_process_id) and id='".$_GET['pid']."');";
         $resp = mssql_query($req);
         while ($row = mssql_fetch_array($resp))
         {
@@ -355,7 +415,7 @@ echo $req;
     echo '<tr><td>Данный процесс включает другие процессы</td><td><ol>';
     if (isset($_GET['pid']))
     {
-        $req="SELECT t1.id, t1.name, t2.unit_name FROM processes as t1 JOIN org_structure as t2 on t1.owner_id=t2.id WHERE t1.parrent_process_id='".$_GET['pid']."';";
+        $req="SELECT t1.id, t1.name, t2.unit_name FROM processes as t1 JOIN org_structure as t2 on t1.owner_id=t2.id WHERE not (t1.id=t1.parrent_process_id) and  t1.parrent_process_id='".$_GET['pid']."';";
         $resp = mssql_query($req);
         while ($row = mssql_fetch_array($resp))
         {

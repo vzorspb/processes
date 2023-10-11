@@ -85,6 +85,23 @@ function mssql_escape($data) {
           $resp = mssql_query($req);
        }
 
+       if($_POST['level_1']!=0)
+       {
+    	  $req="DELETE FROM process_classifier WHERE process_id='".$_POST['pid']."';INSERT INTO process_classifier (process_id, classifier_id) VALUES (".$_POST['pid'].", ".$_POST['level_1'].");";
+          $resp = mssql_query($req);
+       }
+
+       if($_POST['level_2']!=0)
+       {
+    	  $req="INSERT INTO process_classifier (process_id, classifier_id) VALUES (".$_POST['pid'].", ".$_POST['level_2'].");";
+          $resp = mssql_query($req);
+       }
+
+       if($_POST['level_3']!=0)
+       {
+    	  $req="UPDATE processes SET parrent_process_id='".$_POST['pid']."';";
+          $resp = mssql_query($req);
+       }
 
        if($_POST['it_system']!=0)
        {
@@ -97,7 +114,7 @@ function mssql_escape($data) {
    }
    else
    {
-       $req="INSERT INTO processes (name, npa, desc_priority, desc_level, exec_level, owner_id, authority_id, p_start, p_finish, problems, vpp, measurement_id, reciever_id, sender_id) VALUES ('".mssql_escape($_POST['process_name'])."', '".mssql_escape($_POST['npa'])."', '".$_POST['desc_prority']."', '".$_POST['desc_level']."', '".$_POST['exec_level']."', '".$_POST['owner_id']." ', '".$_POST['authority']."', '".mssql_escape($_POST['p_start'])."', '".mssql_escape($_POST['p_finish'])."', '".mssql_escape($_POST['problems'])."', '".$_POST['vpp']."', '".$_POST['measurement']."', '".$_POST['reciver_id']."', '".$_POST['sender_id']."');";
+       $req="INSERT INTO processes (name, npa, desc_priority, desc_level, exec_level, owner_id, authority_id, p_start, p_finish, problems, vpp, measurement_id, reciever_id, sender_id, creation_date) VALUES ('".mssql_escape($_POST['process_name'])."', '".mssql_escape($_POST['npa'])."', '".$_POST['desc_prority']."', '".$_POST['desc_level']."', '".$_POST['exec_level']."', '".$_POST['owner_id']." ', '".$_POST['authority']."', '".mssql_escape($_POST['p_start'])."', '".mssql_escape($_POST['p_finish'])."', '".mssql_escape($_POST['problems'])."', '".$_POST['vpp']."', '".$_POST['measurement']."', '".$_POST['reciver_id']."', '".$_POST['sender_id']."',now());";
        $resp = mssql_query($req);
 //echo($req);      
 //       echo mssql_get_last_message($db); die();
