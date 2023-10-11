@@ -1,5 +1,5 @@
 <?php
-print '<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8"> ';
+print '<html><meta http-equiv="Content-Type" content="text/html; charset=utf-8">';
 include('menu.php');
 
 error_reporting(E_ALL);
@@ -14,11 +14,11 @@ ini_set('display_errors', '1');
     else
     { if ($_COOKIE['org_id']==0)
     {
-       $add=' WHERE (parrent_process_id=0 or parrent_process_id is null);';
+       $add=' WHERE (parrent_process_id=0 or parrent_process_id is null or parrent_process_id=t1.id);';
     }
     else
     {
-       $add=' WHERE t3.org_id='.$_COOKIE['org_id'].' and (parrent_process_id=0 or parrent_process_id is null)';
+       $add=' WHERE t3.org_id='.$_COOKIE['org_id'].' and (parrent_process_id=0 or parrent_process_id is null or parrent_process_id=t1.id)';
        
        if (isset($_GET['er'])){$add=$add.' and t1.desc_priority=12';echo '<p><b>Предложения для включения в программу "Эффективный регион"</b></p>'; } else {echo '<p> <a href="?er">Предложения для включения в программу "Эффективный регион"</a></p>';}
        $add=$add.';';
@@ -27,12 +27,12 @@ ini_set('display_errors', '1');
     $req='SELECT t1.name, t2.unit_name, t1.id FROM processes as t1 JOIN org_structure as t2 ON t1.owner_id = t2.id JOIN authority as t3 ON t1.authority_id=t3.id'.$add;
     $resp = mssql_query($req);
     $i=0;
-    echo "<table class='table'><thead><tr><td></td><td>Наименование процесса</td><td>Владелец процесса</td><td></td></tr></thead>";
+    echo "<br><table class='table'><thead><tr><td></td><td>Наименование процесса</td><td>Владелец процесса</td><td></td></tr></thead>";
     while($row = mssql_fetch_array($resp)) {
       $i=$i+1;
       $proc = stripslashes(str_replace(array('\n','\r'),array('',''),$row[0]));
       $ou = $row[1];
-      $req2="SELECT t1.id, t1.name, t2.unit_name FROM processes as t1 JOIN org_structure as t2 on t1.owner_id=t2.id WHERE t1.parrent_process_id='".$row[2]."';";
+      $req2="SELECT t1.id, t1.name, t2.unit_name FROM processes as t1 JOIN org_structure as t2 on t1.owner_id=t2.id WHERE not t1.parrent_process_id=t1.id and t1.parrent_process_id='".$row[2]."';";
       $resp2 = mssql_query($req2);
       echo "<tr><td";
       if (mssql_num_rows($resp2)>0)
