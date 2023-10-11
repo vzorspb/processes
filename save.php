@@ -42,6 +42,7 @@ function mssql_escape($data) {
     
     print '<html><meta http-equiv="Content-Type" content="text/html; charset=cp1251"> ';
 //   print_r ($_POST);die();
+update:
    if (isset($_POST['pid']))
    {
        $req="UPDATE processes SET reciever_id='".$_POST['reciever_id']."', sender_id='".$_POST['sender_id']."', authority_id='".$_POST['authority']."', measurement_id='".$_POST['measurement']."', vpp='".$_POST['vpp']."', p_finish='".mssql_escape($_POST['p_finish'])."' , p_start='".mssql_escape($_POST['p_start'])."' ,problems='".mssql_escape($_POST['problems'])."', name='".mssql_escape($_POST['process_name'])."' , npa='".mssql_escape($_POST['npa'])."' , desc_priority='".$_POST['desc_prority']."', desc_level='".$_POST['desc_level']."', exec_level='".$_POST['exec_level']."', owner_id='".$_POST['owner_id']."' WHERE id='".$_POST['pid']."';";
@@ -99,7 +100,7 @@ function mssql_escape($data) {
 
        if($_POST['level_3']!=0)
        {
-    	  $req="UPDATE processes SET parrent_process_id='".$_POST['pid']."';";
+    	  $req="UPDATE processes SET parrent_process_id='".$_POST['level_3']."' WHERE id='".$_POST['pid']."';";
           $resp = mssql_query($req);
        }
 
@@ -114,10 +115,10 @@ function mssql_escape($data) {
    }
    else
    {
-       $req="INSERT INTO processes (name, npa, desc_priority, desc_level, exec_level, owner_id, authority_id, p_start, p_finish, problems, vpp, measurement_id, reciever_id, sender_id, creation_date) VALUES ('".mssql_escape($_POST['process_name'])."', '".mssql_escape($_POST['npa'])."', '".$_POST['desc_prority']."', '".$_POST['desc_level']."', '".$_POST['exec_level']."', '".$_POST['owner_id']." ', '".$_POST['authority']."', '".mssql_escape($_POST['p_start'])."', '".mssql_escape($_POST['p_finish'])."', '".mssql_escape($_POST['problems'])."', '".$_POST['vpp']."', '".$_POST['measurement']."', '".$_POST['reciver_id']."', '".$_POST['sender_id']."',now());";
+       $req="INSERT INTO processes (name, npa, desc_priority, desc_level, exec_level, owner_id, authority_id, p_start, p_finish, problems, vpp, measurement_id, reciever_id, sender_id, creation_date) VALUES ('".mssql_escape($_POST['process_name'])."', '".mssql_escape($_POST['npa'])."', '".$_POST['desc_prority']."', '".$_POST['desc_level']."', '".$_POST['exec_level']."', '".$_POST['owner_id']." ', '".$_POST['authority']."', '".mssql_escape($_POST['p_start'])."', '".mssql_escape($_POST['p_finish'])."', '".mssql_escape($_POST['problems'])."', '".$_POST['vpp']."', '".$_POST['measurement']."', '".$_POST['reciver_id']."', '".$_POST['sender_id']."',GETDATE());";
        $resp = mssql_query($req);
-//echo($req);      
-//       echo mssql_get_last_message($db); die();
+#echo($req);      
+#       echo mssql_get_last_message($db); die();
 
        $req = "SELECT SCOPE_IDENTITY() AS ins_id";
        $resp = mssql_query($req);
@@ -141,8 +142,8 @@ function mssql_escape($data) {
     	  $req="INSERT INTO process_workers (process_id, worker_id) VALUES (".$redir.", ".$_POST['process_worker'].");";
           $resp = mssql_query($req);
        }
-
-
+	$_POST['pid']=$redir;
+       goto update;
        header('Location: add.php?pid='.$redir);
    }
  }
