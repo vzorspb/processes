@@ -104,6 +104,13 @@ update:
           $resp = mssql_query($req);
        }
 
+       if($_POST['level_it']!=0)
+       {
+    	  $req="UPDATE processes SET it_level='".$_POST['level_it']."' WHERE id='".$_POST['pid']."';";
+          $resp = mssql_query($req);
+       }
+
+
        if($_POST['it_system']!=0)
        {
     	  $req="INSERT INTO process_it_system (process_id, it_system_id) VALUES (".$_POST['pid'].", ".$_POST['it_system'].");";
