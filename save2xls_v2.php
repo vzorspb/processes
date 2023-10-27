@@ -19,6 +19,8 @@ $sheet->setTitle('Реестр процессов');
 //Выравнивание
 $sheet->getStyle("A3:Z5")->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 
+//Закрепить верхние строки
+$sheet->freezePane('A6');
 
 
 //Ширина столбцов
@@ -174,20 +176,20 @@ $border = array(
 );
 $sheet->getStyle("A3:Z".$num_lines)->applyFromArray($border);
 //перенос строк
-$sheet->getStyle("AB6:AB".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("B6:B".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("D6:D".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("H6:H".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("F6:G".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("Q6:Q".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("O6:O".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("T6:T".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("W6:W".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("K6:K".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("L6:L".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("M6:M".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("R6:S".$num_lines)->getAlignment()->setWrapText(true);
-$sheet->getStyle("X6:X".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("AB6:AB".$num_lines)->getAlignment()->setWrapText(true);
+$sheet->getStyle("A6:Z".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("D6:D".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("H6:H".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("F6:G".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("Q6:Q".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("O6:O".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("T6:T".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("W6:W".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("K6:K".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("L6:L".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("M6:M".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("R6:S".$num_lines)->getAlignment()->setWrapText(true);
+//$sheet->getStyle("X6:X".$num_lines)->getAlignment()->setWrapText(true);
 //Выравнивание
 $sheet->getStyle("A3:B".$num_lines)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
 $sheet->getStyle("H3:J".$num_lines)->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
@@ -295,7 +297,7 @@ while($row = mssql_fetch_array($resp))
       $list = $list.$row2[0];
    } 
 
-//   $sheet->setCellValueByColumnAndRow(22, $i+5, $list);   
+   $sheet->setCellValueByColumnAndRow(22, $i+5, $list);   
 //   if ($list=='')
 //   {
 //      $sheet->setCellValueByColumnAndRow(23, $i+5, '0');   
@@ -357,7 +359,7 @@ header ( "Last-Modified: " . gmdate("D,d M YH:i:s") . " GMT" );
 header ( "Cache-Control: no-cache, must-revalidate" );
 header ( "Pragma: no-cache" );
 header ( "Content-type: application/vnd.ms-excel" );
-header ( "Content-Disposition: attachment; filename=processes.xls" );
+header ( "Content-Disposition: attachment; filename=Реестр_процессов_v2.xls" );
 // Выводим содержимое файла
 $objWriter = new PHPExcel_Writer_Excel5($xls);
 $objWriter->save('php://output');
