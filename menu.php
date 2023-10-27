@@ -97,12 +97,14 @@ echo "</select></li>";
 echo "<li><a class='link' href='index.php?start=".$org_id."'>Штатная структура</a></li>";
 echo "<li><a class='link' href='authority.php'>Полномочия/виды деятельности</a></li>";
 echo "<li><a class='link' href='processes.php'>Процессы</a></li>";
+echo "<li><a class='link' href='docs.php'>Документы</a></li>";
 if ($islogin or $islocal) {echo "<li><a class='link' href='add.php'>Добавить процесс</a></li>";}
 //echo "<li><a href='help.php'>ЧаВо</a></li>";
 if ($islogin or $islocal) {echo "<li><a class='link' href='it.php'>Использование IT систем</a></li>";}
 if ($islogin)
 {
    echo "<li><a class='link' href='save2xls.php'>Скачать Excel</a></li>";
+      echo "<li><a class='link' href='save2xls_v2.php'>Скачать Excel V2</a></li>";
    if (strpos($_SERVER['REQUEST_URI'],'?'))
    {
       echo "<li><a class='link' href='".$_SERVER['REQUEST_URI']."&quit'>&#10008; Выйти (".$username.")</a></li>";
