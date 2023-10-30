@@ -178,18 +178,19 @@ while($row = mssql_fetch_array($resp))
    
 // Информационные системы   
    $list='';
-   $req2="SELECT t2.s_name FROM process_it_system as t1 JOIN it_system as t2 ON t2.id=t1.it_system_id WHERE  t1.process_id=".$row[9];
+   $req2="SELECT t2.s_name FROM process_it_system as t1 JOIN it_system as t2 ON t2.id=t1.it_system_id WHERE  t1.process_id=".$row['id'];
+//   echo $req2;die;
    $resp2 = mssql_query($req2);
    while ($row2= mssql_fetch_array($resp2))
    {
-      $list = $list.$row2[0];
+      $list = $list.$row2['s_name'];
    } 
 
    $sheet->setCellValueByColumnAndRow(22, $i+5, $list);   
 
 //КПР
    $list='';
-   $req2="SELECT t2.npp FROM process_kpr as t1 JOIN kpr as t2 ON t2.id=t1.kpr_id WHERE  t1.process_id=".$row[9];
+   $req2="SELECT t2.npp FROM process_kpr as t1 JOIN kpr as t2 ON t2.id=t1.kpr_id WHERE  t1.process_id=".$row['id'];
    $resp2 = mssql_query($req2);
    while ($row2= mssql_fetch_array($resp2))
    {
