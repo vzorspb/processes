@@ -35,7 +35,7 @@ $sheet->getColumnDimension("J")->setWidth(14.57);
 $sheet->getColumnDimension("K")->setWidth(25);
 $sheet->getColumnDimension("L")->setWidth(50);
 $sheet->getColumnDimension("M")->setWidth(25);
-$sheet->getColumnDimension("N")->setWidth(17);
+$sheet->getColumnDimension("N")->setWidth(30);
 $sheet->getColumnDimension("O")->setWidth(30);
 $sheet->getColumnDimension("R")->setWidth(30);
 $sheet->getColumnDimension("S")->setWidth(15);
@@ -187,6 +187,20 @@ while($row = mssql_fetch_array($resp))
    } 
 
    $sheet->setCellValueByColumnAndRow(22, $i+5, $list);   
+
+//Исполнитель
+   $list='';
+   $req2="SELECT concat(t2.unit_name,'(',t3.unit_name,');') as unit_name FROM process_workers as t1 JOIN org_structure as t2 ON t2.id=t1.worker_id JOIN org_structure as t3 ON t3.id=t2.parrent_id WHERE t1.process_id=".$row['id'];
+//   echo $req2;die;   
+   $resp2 = mssql_query($req2);
+   while ($row2= mssql_fetch_array($resp2))
+   {
+      $list = $list.$row2['unit_name'];
+   } 
+
+   $sheet->setCellValueByColumnAndRow(13, $i+5, $list);   
+
+
 
 //КПР
    $list='';
