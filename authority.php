@@ -14,7 +14,7 @@ include('menu.php');
     $resp = mssql_query($req);
     $i=0;
     
-    echo "<table class='table'><thead><tr><td></td><td>Наименование полномочия/вида деятельности</td><td>Количество инвентаризированных процессов</td><td>По структурным подразделениям</td></tr></thead>";
+    echo "<br><table class='table'><thead><tr><td></td><td>Наименование полномочия/вида деятельности</td><td>Количество инвентаризированных процессов</td><td>По структурным подразделениям</td></tr></thead>";
     while($row = mssql_fetch_array($resp)) {
       $i=$i+1;
       $num=$row[0];

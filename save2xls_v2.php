@@ -215,7 +215,7 @@ while($row = mssql_fetch_array($resp))
 
 //Жизненная ситуация
    $list='';
-   $req2="SELECT t2.name FROM process_situation as t1 JOIN situation as t2 ON t2.id=t1.situation_id WHERE  t1.process_id=".$row[9];
+   $req2="SELECT t2.name FROM process_situation as t1 JOIN situation as t2 ON t2.id=t1.situation_id WHERE  t1.process_id=".$row['id'];
    $resp2 = mssql_query($req2);
    while ($row2= mssql_fetch_array($resp2))
    {
@@ -226,7 +226,7 @@ while($row = mssql_fetch_array($resp))
 
 //Блок
    $list='';
-   $req2="SELECT t2.class FROM process_classifier as t1 JOIN classifier as t2 ON t2.id=t1.classifier_id WHERE t2.classifier_level=1 and t1.process_id=".$row[9];
+   $req2="SELECT t2.class FROM process_classifier as t1 JOIN classifier as t2 ON t2.id=t1.classifier_id WHERE t2.classifier_level=1 and t1.process_id=".$row['id'];
    $resp2 = mssql_query($req2);
    while ($row2= mssql_fetch_array($resp2))
    {
@@ -237,7 +237,7 @@ while($row = mssql_fetch_array($resp))
 
 //Процессная категория
    $list='';
-   $req2="SELECT t2.class FROM process_classifier as t1 JOIN classifier as t2 ON t2.id=t1.classifier_id WHERE t2.classifier_level=2 and t1.process_id=".$row[9];
+   $req2="SELECT t2.class FROM process_classifier as t1 JOIN classifier as t2 ON t2.id=t1.classifier_id WHERE t2.classifier_level=2 and t1.process_id=".$row['id'];
    $resp2 = mssql_query($req2);
    while ($row2= mssql_fetch_array($resp2))
    {

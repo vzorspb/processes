@@ -8,7 +8,7 @@ ini_set('display_errors', '1');
      
     {
     if (isset($_GET['filter']))
-    {$add=' WHERE t1.id in ('.$_GET['filter'].') ';
+    {$add=' WHERE ((parrent_process_id=0 or parrent_process_id is null or parrent_process_id=t1.id) and t1.id in ('.$_GET['filter'].')) or (t1.id in ('.$_GET['filter'].') and not t1.parrent_process_id in ('.$_GET['filter'].')) ';
        if (isset($_GET['er'])){$add=$add.' and t1.desc_priority=12';echo '<p><b>Предложения для включения в программу "Эффективный регион"</b></p>'; } else {echo '<p> <a href="?er&filter='.$_GET['filter'].'">Предложения для включения в программу "Эффективный регион"</a></p>';}
     }
     else
@@ -38,12 +38,14 @@ ini_set('display_errors', '1');
       if (mssql_num_rows($resp2)>0)
       {
     	 $n = mssql_num_rows($resp2)+1;
-         echo " rowspan=".$n;
+//         echo " rowspan=".$n;
       }
       echo ">".$i."</td><td style='text-align: left; vertical-align: middle;'>".$proc."</td><td>".$ou."</td><td><a href='add.php?pid=".$row[2]."'>Карточка процесса</a></td></tr>";
+      $j=0;
       while ($row2 = mssql_fetch_array($resp2))
       {
-           echo "<tr><td style='text-align: left; vertical-align: middle;'><i>".$row2[1]."</i></td><td><i>".$row2[2]."</i></td><td><a href='add.php?pid=".$row2[0]."'>Карточка процесса</a></td></tr>";    
+           $j++;
+           echo "<tr><td>".$i.'.'.$j."</td><td style='text-align: left; vertical-align: middle;'><i>".stripslashes($row2[1])."</i></td><td><i>".$row2[2]."</i></td><td><a href='add.php?pid=".$row2[0]."'>Карточка процесса</a></td></tr>";    
       }                        
     
       }

@@ -235,7 +235,7 @@ echo $req;
     echo '<select name="level_2">';
     echo '<option value=0></option>';
    if ($level_1>0){$wh=" and parrent_class_id='".$level_1."'";} else {$wh='';}
-    $req='SELECT id,npp,class FROM classifier WHERE classifier_level=2'.$wh.' ORDER BY id;';
+    $req='SELECT id,npp,class FROM classifier WHERE classifier_level=2'.$wh.' ORDER BY npp;';
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
     {
@@ -250,7 +250,7 @@ echo $req;
     if ($level_3==$_GET['pid']) {echo ' checked';}
     echo '></td><td>';
     echo '<select name="level_3"';
-    if ($level_3==$_GET['pid']) {echo disabled;}
+    if ($level_3==$_GET['pid'] and isset($_GET['pid'])) {echo disabled;}
     echo '>';
     echo '<option value=0></option>';
     if ($row[0]==$level_3){echo " selected ";}    
@@ -261,7 +261,7 @@ echo $req;
       $txt = $row[1];
       echo "<option ";
       if ($row[0]==$level_3){echo " selected ";}    
-      echo "value='".$row[0]."'> ".$txt."</option>";
+      echo "value='".$row[0]."'> ".stripslashes($txt)."</option>";
     }    
     echo '</select>';
     echo '</td></tr>';
@@ -430,7 +430,7 @@ echo $req;
         $resp = mssql_query($req);
         while ($row = mssql_fetch_array($resp))
         {
-           echo '<a href="add.php?pid='.$row[0].'">'.$row[1].'/'.$row[2].'</a>';
+           echo '<a href="add.php?pid='.$row[0].'">'.stripslashes($row[1]).'/'.stripslashes($row[2]).'</a>';
         }
     }
     echo '</td></tr>';    
