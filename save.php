@@ -45,6 +45,9 @@ function mssql_escape($data) {
 update:
    if (isset($_POST['pid']))
    {
+       if (isset($_POST['vpp'])){}else{$_POST['vpp']='';}
+       if (isset($_POST['exec_level'])){}else{$_POST['exec_level']='';}       
+       
        $req="UPDATE processes SET creation_date=GETDATE(), reciever_id='".$_POST['reciever_id']."', sender_id='".$_POST['sender_id']."', authority_id='".$_POST['authority']."', measurement_id='".$_POST['measurement']."', vpp='".$_POST['vpp']."', p_finish='".mssql_escape($_POST['p_finish'])."' , p_start='".mssql_escape($_POST['p_start'])."' ,problems='".mssql_escape($_POST['problems'])."', name='".mssql_escape($_POST['process_name'])."' , npa='".mssql_escape($_POST['npa'])."' , desc_priority='".$_POST['desc_prority']."', desc_level='".$_POST['desc_level']."', exec_level='".$_POST['exec_level']."', owner_id='".$_POST['owner_id']."' WHERE id='".$_POST['pid']."';";
        $resp = mssql_query($req);
 //echo($req);      

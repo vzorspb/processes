@@ -109,7 +109,6 @@ if ($islogin or $islocal)
 }
 if ($islogin)
 {
-</li>";
    if (strpos($_SERVER['REQUEST_URI'],'?'))
    {
       echo "<li><a class='link' href='".$_SERVER['REQUEST_URI']."&quit'>&#10008; Выйти (".$username.")</a></li>";

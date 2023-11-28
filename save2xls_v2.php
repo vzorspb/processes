@@ -151,17 +151,20 @@ $i=0;
 while($row = mssql_fetch_array($resp)) 
 {
    $i++;
-   $sheet->setCellValueByColumnAndRow(0, $i+5, $i );
+//   $sheet->setCellValueByColumnAndRow(0, $i+5, '=HYPERLINK("'.$url.'/add.php?pid='.$row['id'].'&"; '.$i.')' );
+//    $sheet->setCellValue('A'.($i+5), '=HYPERLINK("'.$url.'/add.php?pid='.$row['id'].'&"; "'.$i.'")' );
+
+    $sheet->setCellValue('A'.($i+5), '=HYPERLINK("'.$url.'/add.php?pid='.$row['id'].'&","'.$i.'")' );
 //   $sheet->setCellValueByColumnAndRow(5, $i+5, stripslashes($row[0]));
    $sheet->setCellValueByColumnAndRow(2, $i+5, stripslashes($row['number']));
    $sheet->setCellValueByColumnAndRow(7, $i+5, stripslashes($row['name']));   
-   if ($row[2]=='          ')
-   {
-   }
-   else
-   {
+//   if ($row[2]=='          ')
+//   {
+//   }
+//   else
+//   {
       $sheet->setCellValueByColumnAndRow(3, $i+5, stripslashes($row['text']));    
-   }
+//   }
 
    $sheet->setCellValueByColumnAndRow(10, $i+5, stripslashes($row['desc_priority']));   
    $sheet->setCellValueByColumnAndRow(11, $i+5, stripslashes($row['npa']));   
@@ -173,8 +176,11 @@ while($row = mssql_fetch_array($resp))
    $sheet->setCellValueByColumnAndRow(19, $i+5, stripslashes($row['name_to']));               
    $sheet->setCellValueByColumnAndRow(24, $i+5, stripslashes($row['creation_date']));                  
    $sheet->setCellValueByColumnAndRow(23, $i+5, stripslashes($row['it_level']));                  
-   $sheet->setCellValueByColumnAndRow(9, $i+5, stripslashes($row['desc_level']));                     
-   $sheet->setCellValueByColumnAndRow(6, $i+5, stripslashes($row['pgroup']));                     
+   $sheet->setCellValueByColumnAndRow(9, $i+5, stripslashes($row['desc_level']));                 
+   if ($row['pgroup']>'')
+   {$sheet->setCellValueByColumnAndRow(6, $i+5, stripslashes($row['pgroup']));}
+   else
+   {$sheet->setCellValueByColumnAndRow(6, $i+5, stripslashes($row['text']));}
    
 // Информационные системы   
    $list='';

@@ -25,6 +25,7 @@ ini_set('display_errors', '1');
     }
     }
     $req='SELECT t1.name, t2.unit_name, t1.id FROM processes as t1 JOIN org_structure as t2 ON t1.owner_id = t2.id JOIN authority as t3 ON t1.authority_id=t3.id'.$add;
+//    echo $req;
     $resp = mssql_query($req);
     $i=0;
     echo "<br><table class='table'><thead><tr><td></td><td>Наименование процесса</td><td>Владелец процесса</td><td></td></tr></thead>";

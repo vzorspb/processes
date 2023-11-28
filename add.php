@@ -282,7 +282,7 @@ echo $req;
     echo '</td></tr>';
     echo '<tr><td rowspan=5>Общие сведения</td><td>Управляющее воздействие (документ, регламентирующий процесс)</td><td><textarea style="width:100%" name="npa">'.$npa.'</textarea></td></tr>';
     echo '<tr><td>Статус процесса (реинжиниринг)</td><td><select name="desc_level">';
-    echo "<option value='0'></option>";
+#    echo "<option value='0'></option>";
     $req='SELECT * FROM descr_level ORDER BY id;';
     $resp = mssql_query($req);
     while($row = mssql_fetch_array($resp)) 
